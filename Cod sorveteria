@@ -1,0 +1,143 @@
+import React from 'react';
+import { View, Text, Button, TextInput, StyleSheet, FlatList, Image, ScrollView } from 'react-native';
+import { NavigationContainer } from '@react-navigation/native';
+import { createStackNavigator } from '@react-navigation/stack';
+
+// Componente HomeScreen
+const HomeScreen = ({ navigation }) => (
+  <View style={styles.container}>
+    <Text style={styles.title}>Sorveteria Delícia</Text>
+    <Text style={styles.subtitle}>Explorar nosso delicioso menu ou sugerir um novo sabor!</Text>
+    <Button title="Ver Menu" onPress={() => navigation.navigate('Menu')} />
+    <Button title="Sugerir Novo Sorvete" onPress={() => navigation.navigate('Suggestion')} />
+  </View>
+);
+
+// Componente MenuScreen
+const MenuScreen = () => {
+  const products = [
+    { id: '1', name: 'Chocolate', price: '5.00', description: 'Delicioso sorvete de chocolate.', image: 'https://example.com/chocolate.jpg' },
+    { id: '2', name: 'Baunilha', price: '4.00', description: 'Sorvete clássico de baunilha.', image: 'https://example.com/baunilha.jpg' },
+  ];
+
+  return (
+    <ScrollView contentContainerStyle={styles.container}>
+      <Text style={styles.header}>Menu de Sorvetes</Text>
+      <FlatList
+        data={products}
+        keyExtractor={(item) => item.id}
+        renderItem={({ item }) => (
+          <View style={styles.productCard}>
+            <Image source={{ uri: item.image }} style={styles.image} />
+            <Text style={styles.productName}>{item.name}</Text>
+            <Text style={styles.productPrice}>R${item.price}</Text>
+            <Text style={styles.productDescription}>{item.description}</Text>
+          </View>
+        )}
+      />
+    </ScrollView>
+  );
+};
+
+// Componente SuggestionScreen
+const SuggestionScreen = ({ navigation }) => {
+  const [suggestion, setSuggestion] = React.useState('');
+
+  const submitSuggestion = () => {
+    if (suggestion) {
+      alert(`Sua sugestão "${suggestion}" foi recebida!`);
+      setSuggestion('');
+      navigation.navigate('Home'); // Retorna à tela inicial
+    } else {
+      alert('Por favor, preencha o campo de sugestão.');
+    }
+  };
+
+  return (
+    <View style={styles.container}>
+      <Text style={styles.header}>Sugira um Novo Sorvete</Text>
+      <TextInput
+        style={styles.input}
+        placeholder="Sugira um novo sabor de sorvete"
+        value={suggestion}
+        onChangeText={setSuggestion}
+      />
+      <Button title="Enviar Sugestão" onPress={submitSuggestion} />
+      <Button title="Voltar ao Início" onPress={() => navigation.navigate('Home')} />
+    </View>
+  );
+};
+
+// Stack Navigator
+const Stack = createStackNavigator();
+
+const App = () => (
+  <NavigationContainer>
+    <Stack.Navigator initialRouteName="Home">
+      <Stack.Screen name="Home" component={HomeScreen} />
+      <Stack.Screen name="Menu" component={MenuScreen} />
+      <Stack.Screen name="Suggestion" component={SuggestionScreen} />
+    </Stack.Navigator>
+  </NavigationContainer>
+);
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    padding: 16,
+    backgroundColor: '#fff',
+  },
+  title: {
+    fontSize: 28,
+    fontWeight: 'bold',
+    textAlign: 'center',
+    marginBottom: 20,
+  },
+  subtitle: {
+    fontSize: 16,
+    textAlign: 'center',
+    marginBottom: 20,
+  },
+  header: {
+    fontSize: 22,
+    fontWeight: 'bold',
+    marginBottom: 10,
+    textAlign: 'center',
+  },
+  productCard: {
+    marginBottom: 20,
+    padding: 10,
+    backgroundColor: '#f9f9f9',
+    borderRadius: 8,
+    borderColor: '#ddd',
+    borderWidth: 1,
+  },
+  image: {
+    width: '100%',
+    height: 150,
+    borderRadius: 8,
+    marginBottom: 10,
+  },
+  productName: {
+    fontSize: 18,
+    fontWeight: 'bold',
+  },
+  productPrice: {
+    fontSize: 16,
+    color: '#888',
+  },
+  productDescription: {
+    fontSize: 14,
+    marginVertical: 10,
+  },
+  input: {
+    width: '100%',
+    padding: 8,
+    borderWidth: 1,
+    borderColor: '#ccc',
+    borderRadius: 4,
+    marginBottom: 10,
+  },
+});
+
+export default App;
